@@ -52,8 +52,82 @@ function startGame() {
         dealerAceCount += checkAce(card);
         document.getElementById("dealer-cards").append(cardImg);
     }
+    console.log(dealerSum);
+
+    for (let i =0; i < 2; i++); {
+        let cardImg = document.createElement("img");
+        let card = deck.pop();
+        cardImg.src = "./cards/" + card + ".png";
+        yourSum  += getValue(card);
+        yourAceCount += checkAce(card);
+        document.getElementById("your-cards").append(cardImg);
+    }
+    console.log(yourSum);
+    document.getElementById("hit").addEventListener("click", hit);
+    document.getElementById("stay").addEventListener("click", stay);
+    document.getElementById("restart").addEventListener("click", restart);
+
+
+
 
 }
+
+
+function hit() {
+    if(!canHit){
+        return;
+    }
+    let cardImg = document.createElement("img");
+        let card = deck.pop();
+        cardImg.src = "./cards/" + card + ".png";
+        yourSum  += getValue(card);
+        yourAceCount += checkAce(card);
+        document.getElementById("your-cards").append(cardImg);
+        console.log(yourSum);
+    if (reduceAce(yourSum, yourAceCount) > 21) {
+        canHit = false;
+    }
+}
+
+
+
+  
+
+function stay () {
+    dealerSum = reduceAce(dealerSum, dealerAceCount);
+    yourSum = reduceAce(yourSum, yourAceCount);
+
+    canHit = false;
+    document.getElementById("hidden").src ="./cards/" + hidden + ".png"; //reveal dealers fisrt card
+
+    let message = "";
+    if (yourSum > 21) {
+        message = "You lose"
+    }
+    else if (dealerSum > 21) {
+        message = "You win!!!!"
+    }
+    //for both you and the dealer <= 21
+    else if (yourSum == dealerSum) {
+        message = "Tie!";
+    }
+    else if (yourSum > dealerSum) {
+        message = "You win!!!!";
+    }
+    else if (yourSum < dealerSum) {
+        message = "You lose"; 
+    }
+    document.getElementById("dealer-sum").innerText = dealerSum;
+    document.getElementById("your-sum").innerText = yourSum;
+    document.getElementById("results").innerText = message;
+}
+
+//function restart () {
+    //if canHit = false {
+        //restart
+    //}
+//}
+
 function getValue(card) {
     let data = card.split("-"); //4-c -> [4, c]
     let value = data[0];
@@ -72,4 +146,12 @@ function checkAce(card) {
         return 1;
     }
     return 0;
+}
+
+function reduceAce(playerSum, playerAceCount) {
+    while (playerSum > 21 && playerAceCount > 0) {
+        playerSum -= 10;
+        playerAceCount-= 1;
+    }
+    return playerSum;
 }
